@@ -2,7 +2,7 @@ unit xPlat.OpenPDF;
 
 interface
 
-procedure OpenPDF(const APDFFilename: string; AExternalURL: Boolean = False);
+procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
 
 implementation
 
@@ -16,6 +16,15 @@ uses
   FMX.Types,
   FMX.StdCtrls,
   FMX.Dialogs
+
+  {$IFDEF MSWINDOWS}
+  , Winapi.ShellAPI, Winapi.Windows
+  {$ENDIF MSWINDOWS}
+
+  {$IFDEF MACOS}
+  , Posix.Stdlib
+  {$ENDIF MACOS}
+
   {$IF DEFINED(ANDROID)}
     , Androidapi.JNI.GraphicsContentViewText
     , FMX.Helpers.Android
@@ -23,6 +32,7 @@ uses
     , Androidapi.JNI.Net
     , Androidapi.JNI.JavaTypes
   {$ENDIF}
+
   {$IF DEFINED(IOS)}
     , iOSApi.Foundation
     , Macapi.Helpers
@@ -31,7 +41,7 @@ uses
   ;
 
 {$IF DEFINED(ANDROID)}
-procedure OpenPDF(const APDFFilename: string; AExternalURL: Boolean = False);
+procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
 var
   Intent         : JIntent;
   Filepath       : String;
@@ -40,8 +50,8 @@ var
 begin
   if not AExternalURL then
   begin
-    Filepath       := TPath.Combine(TPath.GetDocumentsPath      , APDFFilename);
-    SharedFilePath := TPath.Combine(TPath.GetSharedDocumentsPath, APDFFilename);
+    Filepath       := TPath.Combine(TPath.GetDocumentsPath      , APDFFileName);
+    SharedFilePath := TPath.Combine(TPath.GetSharedDocumentsPath, APDFFileName);
 
     if TFile.Exists(SharedFilePath) then
       TFile.Delete(SharedFilePath);
@@ -52,7 +62,7 @@ begin
   Intent := TJIntent.Create;
   Intent.setAction(TJIntent.JavaClass.ACTION_VIEW);
 
-  tmpFile := StringReplace(APDFFilename, ' ', '%20', [rfReplaceAll]);
+  tmpFile := StringReplace(APDFFileName, ' ', '%20', [rfReplaceAll]);
 
 
   if AExternalURL
@@ -82,7 +92,7 @@ begin
   TForm(TComponent(Sender).Owner).Close();
 end;
 
-procedure OpenPDF(const APDFFilename: string; AExternalURL: Boolean = False);
+procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
 var
   NSU                      : NSUrl;
   OK                       : Boolean;
@@ -118,17 +128,30 @@ begin
 
   if AExternalURL then
   begin
-    tmpFile := StringReplace(APDFFilename, ' ', '%20', [rfReplaceAll]);
+    tmpFile := StringReplace(APDFFileName, ' ', '%20', [rfReplaceAll]);
     WebBrowser.Navigate('http://' + tmpFile);
   end
   else
-    WebBrowser.Navigate('file://' + TPath.Combine(TPath.GetDocumentsPath, APDFFilename));
+    WebBrowser.Navigate('file://' + TPath.Combine(TPath.GetDocumentsPath, APDFFileName));
 
   frm.ShowModal();
 end;
 {$ENDIF}
 
+{$IFDEF MSWINDOWS}
+procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
+begin
+  ShellExecute(0, 'OPEN', PChar(APDFFileName), '', '', SW_SHOWNORMAL);
+end;
+{$ENDIF}
 
 
+
+{$IFDEF MACOS}
+procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
+begin
+  _system(PAnsiChar('open '+'"'+AnsiString(APDFFileName)+'"'));
+end;
+{$ENDIF MACOS}
 
 end.
