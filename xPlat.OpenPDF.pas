@@ -2,7 +2,29 @@ unit xPlat.OpenPDF;
 
 interface
 
-procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
+uses
+  //Instruções:
+  {
+    As units
+     DW.Android.Helpers e DW.Androidapi.JNI.FileProvider
+
+    É necessário fazer o download do pacote KastriFree do DelphiWords
+    https://github.com/DelphiWorlds/KastriFree
+
+    Em seguida, aponte os caminhos para a API no
+    Tools > Options > Language > Delphi > Library
+
+    UNIDADE:PASTA\KastriFree\Core;
+    UNIDADE:PASTA\KastriFree\Include;
+    UNIDADE:PASTA\KastriFree\API
+  }
+
+  DW.Android.Helpers,
+  DW.Androidapi.JNI.FileProvider;
+
+  procedure OpenPDFWithApi26Less(AFilePath: string); //Menor de API 26
+  procedure OpenPDFWithApi26More(AFilePath: string); //Maior de API 26
+  procedure OpenPDF(const APDFFileName: string);
 
 implementation
 
@@ -15,7 +37,8 @@ uses
   FMX.WebBrowser,
   FMX.Types,
   FMX.StdCtrls,
-  FMX.Dialogs
+  FMX.Dialogs,
+  Androidapi.JNI.Webkit //Novo
 
   {$IFDEF MSWINDOWS}
   , Winapi.ShellAPI, Winapi.Windows
@@ -40,7 +63,57 @@ uses
   {$ENDIF}
   ;
 
+procedure OpenPDFWithApi26Less(AFilePath: string); //Menor de API 26
+var
+  Intent         : JIntent;
+begin
+  Intent := TJIntent.Create;
+  Intent.setAction(TJIntent.JavaClass.ACTION_VIEW);
+
+  Intent.setDataAndType(StrToJURI('file://' + AFilePath), StringToJString('application/pdf'));
+
+  SharedActivity.startActivity(Intent);
+end;
+
+procedure OpenPDFWithApi26More(AFilePath: string); //Maior de API 26
+var
+  LIntent    : JIntent;
+  LAuthority : JString;
+  LUri       : Jnet_Uri;
+begin
+  LAuthority := StringToJString(JStringToString(TAndroidHelper.Context.getApplicationContext.
+    getPackageName) + '.fileprovider');
+  LUri := TJFileProvider.JavaClass.getUriForFile(TAndroidHelper.Context,
+    LAuthority, TJFile.JavaClass.init(StringToJString(AFilePath)));
+  LIntent := TJIntent.JavaClass.init(TJIntent.JavaClass.ACTION_VIEW);
+  LIntent.setDataAndType(LUri, StringToJString('application/pdf'));
+  LIntent.setFlags(TJIntent.JavaClass.FLAG_GRANT_READ_URI_PERMISSION);
+  TAndroidHelper.Activity.startActivity(LIntent);
+end;
+
 {$IF DEFINED(ANDROID)}
+procedure OpenPDF(const APDFFileName: string);
+var
+  LFilePath    : string;
+  LFolderShare : string;
+begin
+  LFilePath    := TPath.Combine(TPath.GetDocumentsPath, APDFFileName);
+  LFolderShare := TPath.Combine(TPath.GetSharedDocumentsPath, 'MinhaPasta');
+  if not (DirectoryExists(LFolderShare)) then
+    ForceDirectories(LFolderShare);
+  LFolderShare := TPath.Combine(LFolderShare, APDFFileName);
+
+  if (FileExists(LFolderShare)) then
+    DeleteFile(LFolderShare);
+
+  TFile.Copy(LFilePath, LFolderShare);
+
+  if TOSVersion.Major >= 8
+  then OpenPDFWithApi26More(LFolderShare)
+  else OpenPDFWithApi26Less(LFolderShare);
+
+end;
+(*
 procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
 var
   Intent         : JIntent;
@@ -78,6 +151,7 @@ begin
     ShowMessage('Não é possível abrir o aquivo PDF' + sLineBreak + Format('[%s] %s', [E.ClassName, E.Message]));
   end;
 end;
+*)
 {$ENDIF}
 
 {$IF DEFINED(iOS)}
@@ -146,12 +220,13 @@ end;
 {$ENDIF}
 
 
-
+(*
 {$IFDEF MACOS}
 procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
 begin
   _system(PAnsiChar('open '+'"'+AnsiString(APDFFileName)+'"'));
 end;
 {$ENDIF MACOS}
+*)
 
 end.
