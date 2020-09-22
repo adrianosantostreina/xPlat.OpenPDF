@@ -1,6 +1,5 @@
 unit uCComunicacao;
 
-
 interface
 
 uses
@@ -19,11 +18,13 @@ uses
   IPPeerClient,
   Data.Bind.Components,
   Data.Bind.ObjectScope,
+
   IdBaseComponent,
   IdComponent,
   IdTCPConnection,
   IdTCPClient,
   IdHTTP,
+
   System.Net.HttpClient;
 
 const
@@ -85,8 +86,7 @@ begin
 end;
 
 function TComunicacao.GravaDados(APIResource, AJson: string): Boolean;
-{$Region}
-(*var
+var
   lJsonStream: TStringStream;
   lIdHTTP: TIdHTTP;
   lResponse: string;
@@ -106,8 +106,9 @@ begin
   except
     result := false;
   end;
-*)
-{$EndRegion}
+
+
+(*
 var
   lJsonStream: TStringStream;
   lIdHTTP: THTTPClient;
@@ -130,6 +131,7 @@ begin
   except
     result := false;
   end;
+*)
 
 
 end;

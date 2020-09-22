@@ -2,6 +2,7 @@ unit xPlat.OpenPDF;
 
 interface
 
+{$IFDEF ANDROID}
 uses
   //Instruções:
   {
@@ -21,10 +22,11 @@ uses
 
   DW.Android.Helpers,
   DW.Androidapi.JNI.FileProvider;
-
   procedure OpenPDFWithApi26Less(AFilePath: string); //Menor de API 26
   procedure OpenPDFWithApi26More(AFilePath: string); //Maior de API 26
-  procedure OpenPDF(const APDFFileName: string);
+{$ENDIF}
+
+  procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = false);overload;
 
 implementation
 
@@ -37,8 +39,10 @@ uses
   FMX.WebBrowser,
   FMX.Types,
   FMX.StdCtrls,
-  FMX.Dialogs,
-  Androidapi.JNI.Webkit //Novo
+  FMX.Dialogs
+  {$IFDEF ANDROID}
+  , Androidapi.JNI.Webkit //Novo
+  {$ENDIF}
 
   {$IFDEF MSWINDOWS}
   , Winapi.ShellAPI, Winapi.Windows
@@ -46,9 +50,9 @@ uses
 
   {$IFDEF MACOS}
   , Posix.Stdlib
-  {$ENDIF MACOS}
+  {$ENDIF}
 
-  {$IF DEFINED(ANDROID)}
+  {$IFDEF ANDROID}
     , Androidapi.JNI.GraphicsContentViewText
     , FMX.Helpers.Android
     , Androidapi.Helpers
@@ -56,21 +60,29 @@ uses
     , Androidapi.JNI.JavaTypes
   {$ENDIF}
 
-  {$IF DEFINED(IOS)}
+  {$IFDEF IOS}
     , iOSApi.Foundation
     , Macapi.Helpers
     , FMX.Helpers.iOS
   {$ENDIF}
   ;
 
-procedure OpenPDFWithApi26Less(AFilePath: string); //Menor de API 26
+{$IFDEF ANDROID}
+procedure OpenPDFWithApi26Less(AFilePath: string; AExternalURL: Boolean = false); //Menor de API 26
 var
   Intent         : JIntent;
 begin
   Intent := TJIntent.Create;
   Intent.setAction(TJIntent.JavaClass.ACTION_VIEW);
 
-  Intent.setDataAndType(StrToJURI('file://' + AFilePath), StringToJString('application/pdf'));
+  if AExternalURL then
+  begin
+    //tmpFile := StringReplace(APDFFileName, ' ', '%20', [rfReplaceAll]);
+    //WebBrowser.Navigate(APDFFileName);
+    Intent.setDataAndType(StrToJURI(AFilePath), StringToJString('application/pdf'));
+  end
+  else
+    WebBrowser.Navigate('file://' + TPath.Combine(TPath.GetDocumentsPath, APDFFileName));
 
   SharedActivity.startActivity(Intent);
 end;
@@ -90,9 +102,10 @@ begin
   LIntent.setFlags(TJIntent.JavaClass.FLAG_GRANT_READ_URI_PERMISSION);
   TAndroidHelper.Activity.startActivity(LIntent);
 end;
+{$ENDIF}
 
-{$IF DEFINED(ANDROID)}
-procedure OpenPDF(const APDFFileName: string);
+{$IFDEF ANDROID}
+procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = false);
 var
   LFilePath    : string;
   LFolderShare : string;
@@ -113,48 +126,9 @@ begin
   else OpenPDFWithApi26Less(LFolderShare);
 
 end;
-(*
-procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
-var
-  Intent         : JIntent;
-  Filepath       : String;
-  SharedFilePath : string;
-  tmpFile        : String;
-begin
-  if not AExternalURL then
-  begin
-    Filepath       := TPath.Combine(TPath.GetDocumentsPath      , APDFFileName);
-    SharedFilePath := TPath.Combine(TPath.GetSharedDocumentsPath, APDFFileName);
-
-    if TFile.Exists(SharedFilePath) then
-      TFile.Delete(SharedFilePath);
-
-    TFile.Copy(Filepath, SharedFilePath);
-  end;
-
-  Intent := TJIntent.Create;
-  Intent.setAction(TJIntent.JavaClass.ACTION_VIEW);
-
-  tmpFile := StringReplace(APDFFileName, ' ', '%20', [rfReplaceAll]);
-
-
-  if AExternalURL
-  then
-//    Intent := TJIntent.JavaClass.init(TJIntent.JavaClass.ACTION_VIEW,
-//      TJnet_Uri.JavaClass.parse(StringToJString(TIdURI.URLEncode(tmpFile))))
-    Intent.setData(StrToJURI(tmpFile))
-  else Intent.setDataAndType(StrToJURI('file://' + SharedFilePath), StringToJString('application/pdf'));
-
-  try
-    SharedActivity.startActivity(Intent);
-  except on E:Exception do
-    ShowMessage('Não é possível abrir o aquivo PDF' + sLineBreak + Format('[%s] %s', [E.ClassName, E.Message]));
-  end;
-end;
-*)
 {$ENDIF}
 
-{$IF DEFINED(iOS)}
+{$IFDEF IOS}
 type
   TCloseParentFormHelper = class
   public
@@ -166,7 +140,7 @@ begin
   TForm(TComponent(Sender).Owner).Close();
 end;
 
-procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
+procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = false);overload;
 var
   NSU                      : NSUrl;
   OK                       : Boolean;
@@ -202,8 +176,8 @@ begin
 
   if AExternalURL then
   begin
-    tmpFile := StringReplace(APDFFileName, ' ', '%20', [rfReplaceAll]);
-    WebBrowser.Navigate('http://' + tmpFile);
+    //tmpFile := StringReplace(APDFFileName, ' ', '%20', [rfReplaceAll]);
+    WebBrowser.Navigate(APDFFileName);
   end
   else
     WebBrowser.Navigate('file://' + TPath.Combine(TPath.GetDocumentsPath, APDFFileName));
@@ -213,20 +187,20 @@ end;
 {$ENDIF}
 
 {$IFDEF MSWINDOWS}
-procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
+procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = false);overload;
 begin
   ShellExecute(0, 'OPEN', PChar(APDFFileName), '', '', SW_SHOWNORMAL);
 end;
 {$ENDIF}
 
-
 (*
 {$IFDEF MACOS}
-procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = False);
+procedure OpenPDF(const APDFFileName: string);overload;
 begin
   _system(PAnsiChar('open '+'"'+AnsiString(APDFFileName)+'"'));
 end;
-{$ENDIF MACOS}
+{$ENDIF}
 *)
+
 
 end.
