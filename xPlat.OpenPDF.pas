@@ -21,12 +21,14 @@ uses
   }
 
   DW.Android.Helpers,
-  DW.Androidapi.JNI.FileProvider;
+  DW.Androidapi.JNI.FileProvider,
+  FMX.WebBrowser;
+
   procedure OpenPDFWithApi26Less(AFilePath: string); //Menor de API 26
   procedure OpenPDFWithApi26More(AFilePath: string); //Maior de API 26
 {$ENDIF}
 
-  procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = false);overload;
+  procedure OpenPDF(const APDFFileName: string; AExternalURL: Boolean = false);
 
 implementation
 
@@ -36,7 +38,7 @@ uses
   FMX.Forms,
   System.Classes,
   System.IOUtils,
-  FMX.WebBrowser,
+  //FMX.WebBrowser,
   FMX.Types,
   FMX.StdCtrls,
   FMX.Dialogs
@@ -68,26 +70,26 @@ uses
   ;
 
 {$IFDEF ANDROID}
-procedure OpenPDFWithApi26Less(AFilePath: string; AExternalURL: Boolean = false); //Menor de API 26
+procedure OpenPDFWithApi26Less(AFilePath: string); //Menor de API 26
 var
   Intent         : JIntent;
 begin
   Intent := TJIntent.Create;
   Intent.setAction(TJIntent.JavaClass.ACTION_VIEW);
 
-  if AExternalURL then
-  begin
+  //if AExternalURL then
+  //begin
     //tmpFile := StringReplace(APDFFileName, ' ', '%20', [rfReplaceAll]);
     //WebBrowser.Navigate(APDFFileName);
-    Intent.setDataAndType(StrToJURI(AFilePath), StringToJString('application/pdf'));
-  end
-  else
-    WebBrowser.Navigate('file://' + TPath.Combine(TPath.GetDocumentsPath, APDFFileName));
+  //  Intent.setDataAndType(StrToJURI(AFilePath), StringToJString('application/pdf'));
+  //end;
+  //else
+  //  WebBrowser.Navigate('file://' + TPath.Combine(TPath.GetDocumentsPath, APDFFileName));
 
   SharedActivity.startActivity(Intent);
 end;
 
-procedure OpenPDFWithApi26More(AFilePath: string); //Maior de API 26
+procedure OpenPDFWithApi26More(AFilePath: string);overload; //Maior de API 26
 var
   LIntent    : JIntent;
   LAuthority : JString;
