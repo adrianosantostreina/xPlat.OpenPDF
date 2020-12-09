@@ -39,7 +39,7 @@ var
     for lCol := 0 to FieldCount - 1 do
     begin
       if Fields[lCol].IsNull then
-        lJO.AddPair(Fields[lCol].FieldName, 'null')
+        lJO.AddPair(Fields[lCol].FieldName, JSONNull.Create)
       else
       begin
         if Fields[lCol].IsBlob then
