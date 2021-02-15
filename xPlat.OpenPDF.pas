@@ -15,17 +15,17 @@ uses
 
     Exemplo:
     <application android:persistent="%persistent%"
-        android:restoreAnyVersion="%restoreAnyVersion%"
-        android:label="%label%"
-        android:debuggable="%debuggable%"
-        android:largeHeap="%largeHeap%"
-        android:icon="%icon%"
-        android:theme="%theme%"
-        android:hardwareAccelerated="%hardwareAccelerated%"
-        android:resizeableActivity="false"
+      android:restoreAnyVersion="%restoreAnyVersion%"
+      android:label="%label%"
+      android:debuggable="%debuggable%"
+      android:largeHeap="%largeHeap%"
+      android:icon="%icon%"
+      android:theme="%theme%"
+      android:hardwareAccelerated="%hardwareAccelerated%"
+      android:resizeableActivity="false"
 
-	      android:grantUriPermissions="true"
-        android:requestLegacyExternalStorage="true"
+      android:grantUriPermissions="true"
+      android:requestLegacyExternalStorage="true"
     >
 
     #2. É importante dar acesso às opções
