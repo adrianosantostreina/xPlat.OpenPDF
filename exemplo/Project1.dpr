@@ -3,7 +3,8 @@ program Project1;
 uses
   System.StartUpCopy,
   FMX.Forms,
-  Unit1 in 'Unit1.pas' {Form1};
+  Unit1 in 'Unit1.pas' {Form1},
+  xPlat.OpenPDF in '..\xPlat.OpenPDF.pas';
 
 {$R *.res}
 

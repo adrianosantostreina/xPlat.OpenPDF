@@ -5,11 +5,12 @@
     <Transaction>2021/02/05 10:12:17.000.959,=C:\Users\Dell\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>2021/02/11 14:17:49.000.456,=C:\Users\Dell\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>2021/02/11 14:38:06.000.469,=C:\Users\Dell\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2021/02/11 18:50:19.000.061,C:\Users\Dell\Documents\Embarcadero\Studio\Projects\Project1.dproj=C:\Users\Dell\Documents\Embarcadero\Studio\Projects\Teste_Share_PDF\Project1.dproj</Transaction>
+    <Transaction>2021/02/11 18:50:19.000.061,C:\Users\Dell\Documents\Embarcadero\Studio\Projects\Teste_Share_PDF\Project1.dproj=C:\Users\Dell\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
     <Transaction>2021/02/11 19:15:20.000.846,=D:\Temp\Abrir PDF Jacques\Teste_Share_PDF\Unit1.pas</Transaction>
+    <Transaction>2021/02/15 11:35:19.874,=D:\2. Exemplos Públicos\classes-uteis\xPlat.OpenPDF.pas</Transaction>
   </Transactions>
 	<ActiveMobileDevice>
-		<NoProfile Android="0070893926" Android64="0049769817" iOSSimulator="iPhone5"/>
+		<NoProfile Android="0070893926" Android64="0070893926" iOSSimulator="iPhone5"/>
 		<PHackIntosh iOSSimulator="iPhone"/>
 	</ActiveMobileDevice>
 </BorlandProject>
