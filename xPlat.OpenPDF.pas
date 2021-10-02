@@ -55,6 +55,10 @@ uses
   , FMX.StdCtrls
   , FMX.Dialogs
 
+  {$IFDEF MSWindows}
+  , System.UITypes
+  {$ENDIF}
+
   {$IFDEF MACOS}
   , Posix.Stdlib
   {$ENDIF MACOS}
@@ -107,7 +111,10 @@ type
 
   TCloseParentFormHelper = class
     public
-      procedure OnClickClose(Sender: TObject);
+     class procedure OnClickClose(Sender: TObject);
+     {$IFDEF MSWindows}
+     class procedure OnClose(Sender: TObject; var Action: TCloseAction);
+     {$ENDIF}
   end;
 
   TOpenPDF = class
@@ -132,9 +139,9 @@ implementation
 
 { TOpenPDF }
 
-procedure TCloseParentFormHelper.OnClickClose(Sender: TObject);
+class procedure TCloseParentFormHelper.OnClickClose(Sender: TObject);
 begin
-  TForm(TComponent(Sender).Owner).Close();
+  TForm(TComponent(Sender).Owner).DisposeOf;
 end;
 
 class procedure TOpenPDF.ShowPDFViewer(AFilename: string);
@@ -143,10 +150,13 @@ var
   WebBrowser  : TWebBrowser;
   LBtnClose   : TButton;
   LToolbar    : TToolBar;
-  LEvent      : TCloseParentFormHelper;
 begin
   LForm                    := TForm.CreateNew(nil);
   LForm.Position           := FFormPosition;
+
+  {$IFDEF MSWindows}
+  LForm.OnClose            := TCloseParentFormHelper.OnClose;
+  {$ENDIF}
 
   if FFormHeight > 0 then  LForm.Height := FFormHeight;
   if FFormWidth  > 0 then  LForm.Width  := FFormWidth;
@@ -168,12 +178,11 @@ begin
   WebBrowser.Parent        := LForm;
   WebBrowser.Align         := TAlignLayout.Client;
 
-  LEvent                   := TCloseParentFormHelper.Create;
-  LBtnClose.OnClick        := LEvent.OnClickClose;
+  LBtnClose.OnClick        := TCloseParentFormHelper.OnClickClose;
 
   WebBrowser.Navigate(AFilename);
 
-  LForm.ShowModal();
+  LForm.Show();
 end;
 
 {$IFDEF ANDROID}
@@ -251,5 +260,13 @@ begin
   //_system(PAnsiChar('open '+'"'+AnsiString(APDFFileName)+'"'));
 end;
 {$ENDIF MACOS}
+
+{$IFDEF MSWindows}
+class procedure TCloseParentFormHelper.OnClose(Sender: TObject;
+ var Action: TCloseAction);
+begin
+  Action := TCloseAction.caFree;
+end;
+{$ENDIF}
 
 end.
