@@ -14,6 +14,7 @@ object Form1: TForm1
     Size.Width = 400.000000000000000000
     Size.Height = 503.000000000000000000
     Size.PlatformDefault = False
+    WindowsEngine = None
   end
   object MobilePermissions1: TMobilePermissions
     Left = 64

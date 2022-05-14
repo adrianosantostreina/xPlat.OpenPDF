@@ -1,5 +1,28 @@
 unit Unit1;
 
+{
+  Apply any config on All Configuration targets
+
+  Requiriments:
+  Project-Options-Entitlement List-Secure File Sharing = True
+  For Delphi 10.4+ there is no need to exchange the provider_paths.xml, while
+  checking TRUE "Secure File Sharing" Delphi will create its own provider_paths.xml,
+  doesn't matter if you exchange it or not
+
+  Permissions:
+  Internet
+  Read and Write external storage
+
+  WARNING
+  Since Android10* (newer) the Android file manager was changed, so we are
+  using now System.IOUtils.TPath.GetPublicPath instead the old version
+  the path on your Cellphone is on /storage/emulated/0/Android/data/<Project PackageName>/files
+  It is a public path which can be reached through APP File Manager OR your own PC
+
+  Tests on:
+  Delphi 11 + 2 Patchs: Android 10, 12
+}
+
 interface
 
 uses
@@ -71,7 +94,7 @@ var
 begin
   LFile  := 'printid.pdf';
 
-  {$IFDEF MSWINDOWS}
+  {$IF defined(MSWINDOWS)}
     //É possível informar tamanho do form e posição
     TOpenPDF.FormHeight   := 800;
     TOpenPDF.FormWidth    := 600;
@@ -81,8 +104,8 @@ begin
     LSharedPath := 'C:\Temp' + PathDelim + 'tmp' + PathDelim;
     ForceDirectories(LSharedPath);
     LCompletePath := Format('%s%s', [LSharedPath, LFile]);
-  {$ENDIF}
-
+  {$IFEND}
+    
   {$IFDEF IOS}
     TOpenPDF.FormHeight   := Self.ClientHeight;
     TOpenPDF.FormWidth    := Self.ClientWidth;
@@ -93,15 +116,18 @@ begin
   begin
     //Baixa o arquivo
     LStream  := TStringStream.Create;
-    idHttp.Get(Format('%s%s',['https://www.controlid.com.br/userguide/', LFile]), LStream);
+    try
+      idHttp.Get(Format('%s%s',['https://www.controlid.com.br/userguide/', LFile]), LStream);
 
-    LStream.Position := 0;
-    {$IFDEF MSWINDOWS}
-      LStream.SaveToFile(LCompletePath);
-    {$ELSE}
-      LStream.SaveToFile(Format('%s%s', [TPath.GetDocumentsPath, LFile]));
-    {$ENDIF}
-    LStream.DisposeOf;
+      LStream.Position := 0;
+      {$IFDEF MSWINDOWS}
+        LStream.SaveToFile(LCompletePath);
+      {$ELSE}
+        LStream.SaveToFile(Format('%s%s', [TPath.GetDocumentsPath, LFile]));
+      {$ENDIF}
+    finally
+      FreeAndNil(LStream);
+    end;    
   end;
 
   {$IFDEF MSWINDOWS}
