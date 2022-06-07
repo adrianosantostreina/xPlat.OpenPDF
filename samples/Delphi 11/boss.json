@@ -1,0 +1,11 @@
+{
+	"name": "Delphi 11",
+	"description": "",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./src",
+	"projects": [],
+	"dependencies": {
+		"github.com/adrianosantostreina/xplat.openpdf": "^0.0.3"
+	}
+}

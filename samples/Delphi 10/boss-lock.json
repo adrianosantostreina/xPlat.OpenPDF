@@ -1,0 +1,14 @@
+{
+	"hash": "d41d8cd98f00b204e9800998ecf8427e",
+	"updated": "2022-06-07T17:18:01.9856303-03:00",
+	"installedModules": {
+		"github.com/adrianosantostreina/xplat.openpdf": {
+			"name": "xplat.openpdf",
+			"version": "0.0.3",
+			"hash": "7113daa9cb98c4704bc84baf033dba3a",
+			"artifacts": {},
+			"failed": false,
+			"changed": false
+		}
+	}
+}
