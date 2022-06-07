@@ -1,8 +1,9 @@
 <p align="center">
-  <a href="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/main/image/logo.png">
-    <img alt="CustomThread" src="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/main/image/logo.png">
+  <a href="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/Documentation/image/logo.png">
+    <img alt="CustomThread" src="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/Documentation/image/logo.png">
   </a>
 </p>
+
 
 # xPlat.OpenPDF
 Classe para facilitar a criação de Threads Anônimos em seu projeto
