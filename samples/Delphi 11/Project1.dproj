@@ -277,6 +277,8 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Android64)'!=''">
         <Debugger_RunParams>-cleaninstall</Debugger_RunParams>
+        <DCC_GenerateAndroidAppBundleFile>true</DCC_GenerateAndroidAppBundleFile>
+        <VerInfo_Build>1</VerInfo_Build>
     </PropertyGroup>
 >>>>>>> Adjust
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">

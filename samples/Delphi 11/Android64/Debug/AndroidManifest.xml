@@ -23,7 +23,7 @@
         android:icon="@drawable/ic_launcher"
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="true"
-        android:resizeableActivity="false"
+        android:resizeableActivity="true"
         android:requestLegacyExternalStorage="true"
         android:grantUriPermissions="true">
         <provider
