@@ -1,0 +1,93 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 600
+  ClientWidth = 400
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  DesignerMasterStyle = 0
+  object WebBrowser1: TWebBrowser
+    Align = Client
+    Size.Width = 400.000000000000000000
+    Size.Height = 503.000000000000000000
+    Size.PlatformDefault = False
+    WindowsEngine = IEOnly
+  end
+  object MobilePermissions1: TMobilePermissions
+    Left = 64
+    Top = 128
+  end
+  object Layout1: TLayout
+    Align = Top
+    Size.Width = 400.000000000000000000
+    Size.Height = 97.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 10
+    object Layout2: TLayout
+      Align = Client
+      Size.Width = 400.000000000000000000
+      Size.Height = 47.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 7
+      object Layout4: TLayout
+        Align = Client
+        Size.Width = 400.000000000000000000
+        Size.Height = 47.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 9
+        object Label1: TLabel
+          Align = Client
+          Margins.Left = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Size.Width = 310.000000000000000000
+          Size.Height = 47.000000000000000000
+          Size.PlatformDefault = False
+          Text = 'Abrir PDF localmente'
+          TabOrder = 6
+        end
+        object swtOpenLocalFile: TSwitch
+          Align = Right
+          IsChecked = False
+          Margins.Left = 10.000000000000000000
+          Margins.Top = 10.000000000000000000
+          Margins.Right = 10.000000000000000000
+          Margins.Bottom = 10.000000000000000000
+          Position.X = 340.000000000000000000
+          Position.Y = 10.000000000000000000
+          Size.Width = 50.000000000000000000
+          Size.Height = 27.000000000000000000
+          Size.PlatformDefault = False
+          TabOrder = 10
+        end
+      end
+    end
+    object Layout3: TLayout
+      Align = Top
+      Size.Width = 400.000000000000000000
+      Size.Height = 50.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 8
+      object Button1: TButton
+        Align = Client
+        Margins.Left = 4.000000000000000000
+        Margins.Top = 4.000000000000000000
+        Margins.Right = 4.000000000000000000
+        Margins.Bottom = 4.000000000000000000
+        Size.Width = 392.000000000000000000
+        Size.Height = 42.000000000000000000
+        Size.PlatformDefault = False
+        TabOrder = 0
+        Text = 'Open PDF'
+        OnClick = Button1Click
+      end
+    end
+  end
+  object idHttp: TNetHTTPClient
+    UserAgent = 'Embarcadero URI Client/1.0'
+    Left = 65
+    Top = 184
+  end
+end
