@@ -99,7 +99,7 @@ begin
     {$IFDEF MSWINDOWS}
       LStream.SaveToFile(LCompletePath);
     {$ELSE}
-      LStream.SaveToFile(Format('%s%s', [TPath.GetDocumentsPath, LFile]));
+      LStream.SaveToFile(Format('%s%s', [TPath.GetSharedDownloadsPath + '/', LFile]));
     {$ENDIF}
     LStream.DisposeOf;
   end;
