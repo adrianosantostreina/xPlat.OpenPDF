@@ -1,9 +1,8 @@
 <p align="center">
-  <a href="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/Documentation/image/logo.png">
-    <img alt="CustomThread" src="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/Documentation/image/logo.png">
+  <a href="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/master/image/logo.png">
+    <img alt="xPlat.OpenPDF" src="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/master/image/logo.png">
   </a>
 </p>
-
 
 # xPlat.OpenPDF
 Classe para facilitar a criação de Threads Anônimos em seu projeto
@@ -11,125 +10,155 @@ Classe para facilitar a criação de Threads Anônimos em seu projeto
 ## Instalação
 Basta cadastrar no Library Path do seu Delphi o caminho da pasta SOURCE da biblioteca, ou se preferir, você pode usar o Boss (gerenciador de dependências do Delphi) para realizar a instalação:
 ```
-boss install github.com/adrianosantostreina/CustomThread
+chefe instale github.com/adrianosantostreina/xPlat.OpenPDF
 ```
 
-## ⚡️ Quickstart
-A unit CustomThread tem uma classe TLib que implementa o método CustomThread. Possui os seguintes parâmetros:
+## ⚠ Requisitos
+Android: é necessário ajustar as permissões no app para que seja possível ler e gravar arquivos no dispositivo
 
-```delphi
-class procedure TLib.CustomThread(
-      AOnStart, 
-      AOnProcess, 
-      AOnComplete: TProc; 
-      AOnError: TProcedureExcept;
-  const ADoCompleteWithError: Boolean
-);
+###### AndroidManifest.xml
+
+```xml
+      android:grantUriPermissions="true"
+      android:requestLegacyExternalStorage="true"
 ```
+###### Assim
+```xml
+    <application android:persistent="%persistent%"
+      android:restoreAnyVersion="%restoreAnyVersion%"
+      android:label="%label%"
+      android:debuggable="%debuggable%"
+      android:largeHeap="%largeHeap%"
+      android:icon="%icon%"
+      android:theme="%theme%"
+      android:hardwareAccelerated="%hardwareAccelerated%"
+      android:resizeableActivity="false"
+
+      android:grantUriPermissions="true"
+      android:requestLegacyExternalStorage="true">
+```
+
+e essas permissões
+
+<b>ReadExternalStorage</b><br>
+<b>WriteExternalStorage</b><br>
+
+É recomendável usar o componente MobilePermissions
+[Mobile Permissions](http://github.com/adrianosantostreina/MobilePermissions)
+
+ou instale pelo <b>Get It Package Manager</b> em seu Delphi IDE.
+
+Marque <b>Compartilhamento seguro de arquivos</b> em <i>Projeto > Opções > Aplicativo > Lista de direitos</i> como na imagem abaixo. (Perfil do Android)
+
+<p align="center">
+  <a href="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/master/image/securefilesharing.png">
+    <img alt="xPlat.OpenPDF" src="https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/master/image/securefilesharing.png">
+  </a>
+</p>
+
+
+## ⚡️ Início rápido
+Crie um novo projeto
 
 <ul>
-  <li>AOnStart = Processos a serem executados antes do processo principal</li>
-  <li>AOnProcess = Processo principal</li>
-  <li>AOnComplete = Processos a serem executados após o processo principal</li>
-  <li>AOnError = Processo a ser executado se ocorrerem erros</li>
-  <li>ADoCompleteWithError = Mensagem de exceção disparada se ocorrer erro</li>
+  <li>Arraste um TButtom para o formulário</li>
+  <li>Arraste um TMobilePermissions para o formulário</li>
+  <li>No evento OnCreate digite</li>
 </ul>
 
+```delphi
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  MobilePermissions1.Dangerous.ReadExternalStorage  := True;
+  MobilePermissions1.Dangerous.WriteExternalStorage := True;
+
+  MobilePermissions1.Apply;
+end;
+
+```
+
+> Se você não estiver usando o componente MobilePermissions, não se esqueça de definir as permissões para ReadExternalStorage e WriteExternalStorage usando seu método. <br>
+
+> Pode ser necessário adicionar o caminho de origem do componente MobilePermissions ao Caminho da biblioteca em Projeto > Opções.
+
+
 ## Usar
-Declare CustomThread na seção Uses da unit onde você deseja fazer a chamada para o método da classe.
+Declare xPlat.OpenPDF na seção Uses da unidade onde você deseja fazer a chamada para o método da classe.
 ```delphi
 uses
-  CustomThread,
+  xPlat.OpenPDF,
 
 ```
 
 ```delphi
-procedure TForm2.Button1Click(Sender: TObject);
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  LFile : string;       //File that will be open
 begin
-  TLib.CustomThread(
-    procedure()
-    begin
-      //Processes to run before the main process
-    end,
-    procedure()
-    begin
-      //Main Process
-    end,
-    procedure()
-    begin
-      //Processes to run after the main process
-    end,
-    procedure(const AException: string)
-    begin
-      //Process to run if errors occur
-    end,
-    True
-  );
+  LFile  := 'Your_PDF_File.pdf';
+  TOpenPDF.Open(LFile);
 end;
 ```
 
-### Exemplo
+## Outro uso
+
+Neste exemplo estamos usando um componente Switch para definir se vamos baixar o arquivo ou usar um arquivo local (Projeto > Implantação)
 
 ```delphi
-[...]
-    private
-      { Private declarations }
-      StepUnit: Single;
-      Step : Single;
-[...]
-
-
-procedure TForm2.FormCreate(Sender: TObject);
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  LStream        : TStringStream;
+  LSharedPath    : String;       //Shared path on Android
+  LPathDocs      : string;       //Documents path on Android
+  LFile          : string;       //File that will be open
+  LCompletePath  : string;
 begin
-  StepUnit := 0;
-  Step := 0;
-  recProgress.Width := 0;
-end;
+  LFile  := 'printid.pdf';
 
-procedure TForm2.Button1Click(Sender: TObject);
-begin
-  TLib.CustomThread(
-    procedure()
-    begin
-      //Processes to run before the main process
-      StepUnit := (recBack.Width / 10);
-      recProgress.Width := Step;
-    end,
-    procedure()
-    begin
-      //Main Process
-      repeat
-        Step := Step + StepUnit;
-        TThread.Synchronize(
-          TThread.CurrentThread,
-          procedure ()
-          begin
-            Sleep(100);
-            recProgress.Width := Step;
-          end
-        );
-      until recProgress.Width >= recBack.Width;
-    end,
-    procedure()
-    begin
-      //Processes to run after the main process
-      Step := 0;
-    end,
-    procedure(const AException: string)
-    begin
-      //Process to run if errors occur
-    end,
-    True
-  );
+  {$IFDEF MSWINDOWS}
+    //It's possible set size and position for form
+    TOpenPDF.FormHeight   := 800;
+    TOpenPDF.FormWidth    := 600;
+    TOpenPDF.FormPosition := TFormPosition.DesktopCenter;
+
+    //If you are going to use it on Windows, you need to set the full path
+    LSharedPath := 'C:\Temp' + PathDelim + 'tmp' + PathDelim;
+    ForceDirectories(LSharedPath);
+    LCompletePath := Format('%s%s', [LSharedPath, LFile]);
+  {$ENDIF}
+
+  {$IFDEF IOS}
+    TOpenPDF.FormHeight   := Self.ClientHeight;
+    TOpenPDF.FormWidth    := Self.ClientWidth;
+    TOpenPDF.FormPosition := TFormPosition.ScreenCenter;
+  {$ENDIF}
+
+  if not swtOpenLocalFile.IsChecked then
+  begin
+    //Download file
+    LStream  := TStringStream.Create;
+    idHttp.Get(Format('%s%s',['https://www.controlid.com.br/userguide/', LFile]), LStream);
+
+    LStream.Position := 0;
+    {$IFDEF MSWINDOWS}
+      LStream.SaveToFile(LCompletePath);
+    {$ELSE}
+      LStream.SaveToFile(Format('%s%s', [TPath.GetSharedDownloadsPath + '/', LFile]));
+    {$ENDIF}
+    LStream.DisposeOf;
+  end;
+
+  {$IFDEF MSWINDOWS}
+    TOpenPDF.Open(LCompletePath);
+  {$ELSE}
+    TOpenPDF.Open(LFile);
+  {$ENDIF}
 end;
 ```
-
-## Video
-[![Assista ao vídeo](https://github.com/adrianosantostreina/CustomThread/blob/main/viceo1.png)](https://youtu.be/A7VS0XyFFn0?sub_confirmation=1)
 
 ## Idiomas da documentação
-[Inglês (en)](https://github.com/adrianosantostreina/CustomThread/blob/main/README.md)<br>
-[Português (ptBR)](https://github.com/adrianosantostreina/CustomThread/blob/main/README-ptBR.md)<br>
+[Inglês (en)](https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/master/README.md)<br>
+[Português (pt-BR)](https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/master/README-ptBR.md)<br>
 
 ## ⚠️ Licença
-`CustomThread` é uma biblioteca gratuita e de código aberto licenciada sob a [Licença MIT](https://github.com/adrianosantostreina/CustomThread/blob/main/LICENSE.md).
+`xPlat.OpenPDF` é uma biblioteca gratuita e de código aberto licenciada sob a [Licença MIT](https://github.com/adrianosantostreina/xPlat.OpenPDF/blob/master/LICENSE.md).

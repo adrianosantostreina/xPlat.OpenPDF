@@ -20,7 +20,7 @@
         android:icon="%icon%"
         android:theme="%theme%"
         android:hardwareAccelerated="%hardwareAccelerated%"
-        android:resizeableActivity="false"
+        android:resizeableActivity="true"
         android:requestLegacyExternalStorage="true"
         android:grantUriPermissions="true">
 <%provider%>
