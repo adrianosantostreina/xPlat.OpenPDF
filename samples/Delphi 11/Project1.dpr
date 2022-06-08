@@ -1,4 +1,5 @@
 program Project1;
+<<<<<<< master
 
 uses
   System.StartUpCopy,
@@ -8,6 +9,14 @@ uses
 
 {$R *.res}
 
+=======
+uses
+  System.StartUpCopy,
+  FMX.Forms,
+  Unit1 in '..\Delphi 10\Unit1.pas' {Form1};
+
+{$R *.res}
+>>>>>>> Adjust
 begin
   Application.Initialize;
   Application.CreateForm(TForm1, Form1);
