@@ -116,6 +116,7 @@ begin
   begin
     //Baixa o arquivo
     LStream  := TStringStream.Create;
+<<<<<<< master
     try
       idHttp.Get(Format('%s%s',['https://www.controlid.com.br/userguide/', LFile]), LStream);
 
@@ -128,6 +129,17 @@ begin
     finally
       FreeAndNil(LStream);
     end;    
+=======
+    idHttp.Get(Format('%s%s',['https://www.controlid.com.br/userguide/', LFile]), LStream);
+
+    LStream.Position := 0;
+    {$IFDEF MSWINDOWS}
+      LStream.SaveToFile(LCompletePath);
+    {$ELSE}
+      LStream.SaveToFile(Format('%s%s', [TPath.GetSharedDownloadsPath + '/', LFile]));
+    {$ENDIF}
+    LStream.DisposeOf;
+>>>>>>> Ajuste documetação rascunho
   end;
 
   {$IFDEF MSWINDOWS}

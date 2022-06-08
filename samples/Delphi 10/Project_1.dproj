@@ -253,7 +253,6 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Android64)'!=''">
         <Debugger_RunParams>-cleaninstall -debugport=54321</Debugger_RunParams>
-        <DCC_UnitSearchPath>C:\Componentes\MobilePermissions\Source;C:\Componentes\MobilePermissions\Component;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Build>1</VerInfo_Build>
         <Android_NotificationAccentColor>#000000</Android_NotificationAccentColor>
     </PropertyGroup>

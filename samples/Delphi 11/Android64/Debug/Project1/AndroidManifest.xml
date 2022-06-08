@@ -24,7 +24,8 @@
         android:theme="@style/AppTheme"
         android:hardwareAccelerated="true"
         android:resizeableActivity="false"
-        android:requestLegacyExternalStorage="true">
+        android:requestLegacyExternalStorage="true"
+        android:grantUriPermissions="true">
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.embarcadero.Project1.fileprovider"
