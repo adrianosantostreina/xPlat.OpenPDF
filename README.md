@@ -5,7 +5,7 @@
 </p>
 
 # xPlat.OpenPDF
-Class to facilitate the creation of Anonymous Threads in your project
+Class for easy downloading and viewing of PDF files on Android and iOS.
 
 ## Installation
 Just register in the Library Path of your Delphi the path of the SOURCE folder of the library, or if you prefer, you can use Boss (dependency manager for Delphi) to perform the installation:
